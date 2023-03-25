@@ -33,12 +33,12 @@ class LoginView(TemplateView):
         login(request, user)
         if next:
             return redirect(next)
-        return redirect('products_index')
+        return redirect('index')
 
 
 def logout_view(request):
     logout(request)
-    return redirect('products_index')
+    return redirect('index')
 
 
 class RegisterView(CreateView):
@@ -60,7 +60,7 @@ class RegisterView(CreateView):
         if not next_url:
             next_url = self.request.POST.get('next')
         if not next_url:
-            next_url = reverse('show_products')
+            next_url = reverse('index')
         return next_url
 
 

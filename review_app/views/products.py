@@ -4,7 +4,8 @@ from django.shortcuts import redirect
 from django.urls import reverse, reverse_lazy
 from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView
 
-from review_app.forms import ReviewForm, ProductForm
+from review_app.forms.products import ProductForm
+from review_app.forms.reviews import ReviewForm
 from review_app.models import Product, Review
 
 
@@ -17,15 +18,15 @@ class GroupPermission(UserPassesTestMixin):
 
 class SuccessDetailUrlMixin:
     def get_success_url(self):
-        return reverse('show_product', kwargs={'pk': self.object.pk})
+        return reverse('index', kwargs={'pk': self.object.pk})
 
 
 class AddProductView(GroupPermission, SuccessDetailUrlMixin, LoginRequiredMixin, CreateView):
-    template_name = 'products/add_product.html'
+    template_name = 'add_product.html'
     form_class = ProductForm
     model = Product
     extra_context = ()
-    groups = ['Модераторы']
+    groups = ('Moderators', 'admin')
 
     def form_valid(self, form):
         form = self.form_class(self.request.POST, self.request.FILES)
@@ -34,7 +35,7 @@ class AddProductView(GroupPermission, SuccessDetailUrlMixin, LoginRequiredMixin,
 
 
 class ProductsView(ListView):
-    template_name = 'products/products.html'
+    template_name = 'index.html'
     model = Product
     context_object_name = 'products'
     queryset = Product.objects.all()
@@ -43,30 +44,30 @@ class ProductsView(ListView):
 
 
 class ProductView(DetailView):
-    template_name = 'products/product.html'
+    template_name = 'product_detail.html'
     model = Product
 
 
 class ProductUpdateView(GroupPermission, SuccessDetailUrlMixin, LoginRequiredMixin, UpdateView):
-    template_name = 'products/edit_product.html'
+    template_name = 'edit_product.html'
     form_class = ProductForm
     model = Product
-    groups = ['Модераторы']
+    groups = ('Moderators', 'admin')
 
 
 class ProductDeleteView(GroupPermission, DeleteView, LoginRequiredMixin):
-    template_name = 'products/delete_product.html'
+    template_name = 'delete_product.html'
     model = Product
-    success_url = reverse_lazy('show_products')
-    groups = ['Модераторы']
+    success_url = reverse_lazy('index')
+    groups = ('Moderators', 'admin')
 
 
 class ProductAddReviewView(GroupPermission, LoginRequiredMixin, CreateView):
-    template_name = 'reviews/add_review.html'
+    template_name = 'add_review.html'
     form_class = ReviewForm
     model = Product
     extra_context = ()
-    groups = ['Модераторы']
+    groups = ('Moderators', 'admin')
 
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST)
@@ -77,7 +78,7 @@ class ProductAddReviewView(GroupPermission, LoginRequiredMixin, CreateView):
             review.product = product
             review.author = request.user
             review.save()
-            return redirect('show_product', product.pk)
+            return redirect('products_list', product.pk)
         context = {}
         context['form'] = form
         return self.render_to_response(context)
