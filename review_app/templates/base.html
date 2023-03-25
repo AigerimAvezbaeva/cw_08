@@ -1,0 +1,55 @@
+{% load static %}
+{% load bootstrap5 %}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+{% bootstrap_messages %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <title>{% block title %}Blog{% endblock %}</title>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="{% url 'index' %}">
+            <img src="https://otzovik.com/static/img/2018/logos/logo_default.svg" alt="review" width="100" height="34"
+                 class="d-inline-block align-text-top">
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+                {% block menu %}{% endblock %}
+                {% if user.is_authenticated %}
+                <li class="nav-item">
+                    <a href="{% url 'add_product' %}" class="nav-link">Добавить продукт</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'user_detail' user.pk %}" class="nav-link">Личная страница</a>
+                </li>
+                <li class="nav-item">
+                    <form action="{% url 'logout' %}" method="post">
+                        {% csrf_token %}
+                        <input type="submit" value="Выйти" class="nav-link">
+                    </form>
+                </li>
+
+                {% else %}
+                <li class="nav-item"><a href="{% url 'login' %}" class="nav-link">Войти</a></li>
+                <li class="nav-item"><a href="{% url 'register' %}" class="nav-link">Зарегистрироваться</a></li>
+                {% endif %}
+            </ul>
+            {% include 'partial/search_form.html' %}
+        </div>
+    </div>
+</nav>
+<div class="container">
+    {% block content %}{% endblock %}
+</div>
+</body>
+</html>

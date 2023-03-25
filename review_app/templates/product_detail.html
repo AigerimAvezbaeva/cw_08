@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% load bootstrap5 %}
+{% block title %}Product{% endblock %}
+{% block content %}
+<div class="list_view ">
+    <div class="product-card list-group-item p-0 m-0 pl-2 pr-2 pt-2 bg-light">
+        <div class="card-first w-50">
+            {% if product.image %}
+            <div class="item-left w-35">
+                <img class="rounded" src='{{ product.image.url }}' style="height: 230px;">
+            </div>
+            {% else %}
+            <div class="item-left w-35">
+                <img class="rounded" src='https://brilliant24.ru/files/cat/template_01.png'
+                     style="height: 230px;">
+            </div>
+            {% endif %}
+        </div>
+        <div class="card-pro w-50" style="display:inline-block; ">
+            <div class="item-right">
+                <div class="product-title" style="display:flex;">
+                    <p style="font-size:13px; padding: 5px;">Название продукта: <h5
+                        style="display:inline-block; margin-left: 10px;">{{ product.title }}</h5></p>
+                </div>
+                <p style="font-size: 16px;" class="card-text ml-2 h-25">
+                    Средний рейтинг отзывов: {{ product.reviewed_products.get_average }}
+                </p>
+                {% if user.is_authenticated %}
+                <p>
+                    <a href="{% url 'add_review' product.pk %}" style="text-decoration:None; font-size: 15px; ">Добавить
+                        отзыв</a>
+                </p>
+                <p>
+                    <a href="{% url 'edit_product' product.pk %}" style="text-decoration:None; font-size: 15px; ">Редактировать</a>
+                </p>
+                <p>
+                    <a href="{% url 'delete_product' product.pk %}" style="text-decoration:None; font-size: 15px; ">Удалить</a>
+                </p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <li class="list-group-item p-0 m-0 pl-2 pr-2 pt-2 bg-light" style="font-size: 17px;">
+        <span class="">Описание:</span>
+        <p class="">{{ product.description | linebreaks }}</p>
+    </li>
+    <div class="list-group-item p-0 m-0 pl-2 pr-2 pt-2 bg-light">
+        {% for review in product.reviewed_products.all %}
+        <li class="list-group-item p-0 m-0 pl-2 pr-2 mt-3 bg-warning rounded"
+            style="font-size: 18px;">
+            <p class="">Автор: {{ review.author }}</p>
+            <p class="">Email: {{ review.author.email }}</p>
+            <p class="">{{ review.description }}</p>
+            <p>Оценка: {{ review.rating }}</p>
+        </li>
+        <li class="list-group-item p-0 m-0 pl-2 pr-2 pt-3 pb-3 bg-warning rounded"
+            style="font-size: 14px;">
+            <a class="btn aqua" href="{% url 'edit_review' product.pk review.pk %}"
+            >Редактировать</a>
+            <a class="btn reddish"
+               href="{% url 'delete_review' product.pk review.pk %}">Удалить</a>
+        </li>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

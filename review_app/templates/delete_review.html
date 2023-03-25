@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block title %}Article confirm delete{% endblock %}
+{% block menu %}
+{% endblock %}
+{% block content %}
+<div class="list_view">
+    <h2>Вы точно хотите удалить Отзыв?</h2>
+    <form action="{% url 'confirm_delete' review.pk %}" method="post">
+            {% csrf_token %}
+            <p><input type="submit" value="Удалить"></p>
+            <p><a href="{% url 'index' %}">Отмена</a></p>
+        </form>
+    <div class="product-card">
+        <div class="card-first w-50">
+            {% if product.image %}
+            <div class="item-left w-35">
+                <img class="rounded" src='{{ product.image.url }}' style="height: 230px;">
+            </div>
+            {% else %}
+            <div class="item-left w-35">
+                <img class="rounded" src='https://brilliant24.ru/files/cat/template_01.png'
+                     style="height: 230px;">
+            </div>
+            {% endif %}
+        </div>
+        <div class="card-pro w-50" style="display:inline-block; ">
+            <div class="item-right">
+                <div class="product-title" style="display:flex;">
+                <p style="font-size:13px; padding: 5px;">Название продукта: <h5 style="display:inline-block; margin-left: 10px;">{{ product.title }}</h5></p>
+                </div>
+                <p style="font-size: 16px;" class="card-text ml-2 h-25">
+                    Средний рейтинг отзывов: {{ product.reviewed_products.get_average }}
+                </p>
+
+            </div>
+        </div>
+    </div>
+{% endblock %}
