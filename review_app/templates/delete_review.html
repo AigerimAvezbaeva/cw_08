@@ -5,7 +5,7 @@
 {% block content %}
 <div class="list_view">
     <h2>Вы точно хотите удалить Отзыв?</h2>
-    <form action="{% url 'confirm_delete' review.pk %}" method="post">
+    <form action="{% url 'confirm_delete' product.pk review.pk %}" method="post">
             {% csrf_token %}
             <p><input type="submit" value="Удалить"></p>
             <p><a href="{% url 'index' %}">Отмена</a></p>
